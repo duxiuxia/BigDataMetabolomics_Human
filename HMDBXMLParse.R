@@ -31,11 +31,11 @@ for (infile in dir(getwd(),pattern="*.xml")){
   xml_data<-xmlToList(data)
   
   metaboliteList<-rbind(metaboliteList,
-                        data.frame(Accession=xml_data[["accession"]],
-                                   Name=xml_data[["name"]],
-                                   Chemical_Formula=xml_data[["chemical_formula"]],
-                                   Avg_Molecular_Weight=xml_data[["average_molecular_weight"]],
-                                   Monisotopic_weight=xml_data[["monisotopic_moleculate_weight"]]))
+                        data.frame(Accession=toString(xml_data[["accession"]]),
+                                   Name=toString(xml_data[["name"]]),
+                                   Chemical_Formula=toString(xml_data[["chemical_formula"]]),
+                                   Avg_Molecular_Weight=toString(xml_data[["average_molecular_weight"]]),
+                                   Monisotopic_weight=toString(xml_data[["monisotopic_moleculate_weight"]])))
 }
 
 
