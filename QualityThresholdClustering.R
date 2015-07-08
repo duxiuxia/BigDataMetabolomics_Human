@@ -6,25 +6,19 @@
 
 
 
-<<<<<<< Updated upstream
 
-<<<<<<< Updated upstream
 
 rm(list=ls())
 
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
 
 PPMTolerance=10
 
 
 
-<<<<<<< Updated upstream
-if ( !is.element("xlsx", installed.packages()[,1]) ) {
-=======
+
+
 if (!is.element("xlsx", installed.packages()[,1])) {
->>>>>>> Stashed changes
     install.packages("xlsx")
 }
 
@@ -32,7 +26,6 @@ library(xlsx)
 
 
 
-<<<<<<< Updated upstream
 
 # ==============================================================
 # set working directory here
@@ -43,11 +36,11 @@ library(xlsx)
 
 
 
-=======
+
 # ==============================================
 # !!! set working directory using setwd() here
 # ==============================================
->>>>>>> Stashed changes
+
 data1=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV1")
 data2=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV2")
 data3=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV3")
