@@ -8,7 +8,7 @@ i=1
 while (i < length(fileLines)){
   if(length(grep("Name:",fileLines[i]))>0){
     cpdName=substr(gsub(" ","",fileLines[i]),6,nchar(gsub(" ","",fileLines[i])))
-    if(length(grep("Related_CAS#:",fileLines[i+1]))){
+    if(length(grep("Related_CAS#:",fileLines[i+1]))>0){
       i=i+1
     }
     cpdInChIKey=substr(gsub(" ","",fileLines[i+1]),10,nchar(gsub(" ","",fileLines[i+1])))
