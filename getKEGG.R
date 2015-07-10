@@ -36,7 +36,7 @@ if (!file.exists(fileName)) {
     file.create(fileName)
 }
 
-
+error_message <- ""
 
 for (i in 1:length(masses)) {
     current_mass <- as.character(masses[i])
@@ -50,10 +50,8 @@ for (i in 1:length(masses)) {
       #If an empty file do nothing
       
         warning_message <- paste("No compounds in KEGG for mass = ", current_mass, ".")
-        
-        cat(warning_message, file=fileName, sep="\n", append=T)
-        
-        cat(warning_message, sep="\n")
+                
+        error_message <- paste(error_message, warning_message, sep="\n")
     }
     else{
         dataIn <- read.table(query_1)
@@ -109,5 +107,6 @@ for (i in 1:length(masses)) {
     }
 }
 
-
+warning_message <- cat(error_message, file=fileName, sep="\n")
 write.csv(unique(results), file="KEGGDatabaseResults.csv")
+
