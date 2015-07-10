@@ -20,9 +20,7 @@ while (i < length(fileLines)){
     tmp<-data.frame(Name=cpdName,InChIKey=cpdInChIKey,Formula=cpdFormula,MW=cpdMW,ExactMass=cpdExactMass,CASNO=cpdCASNO)
     results<-rbind(results,tmp)
     
-    numPeaks = substr(gsub(" ","",fileLines[i+8]),11,nchar(gsub(" ","",fileLines[i+8])))
-    
-    i=i+8+strtoi(numPeaks)
+    i=i+5
   }
   i=i+1
 }
