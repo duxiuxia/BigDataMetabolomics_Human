@@ -32,12 +32,13 @@ library(XML)
 
 
 
-all_compounds <- data.frame(IUPAC_Name=character(), 
-                           InChIKey=character(), 
-                           Formula=character(),
-                           Exact_Mass=numeric(),
-                           Molecular_Weight=numeric()
-                           )
+all_compounds <- data.frame(PubChem_ID=numeric(), 
+                            IUPAC_Name=character(), 
+                            InChIKey=character(), 
+                            Formula=character(),
+                            Exact_Mass=numeric(),
+                            Molecular_Weight=numeric()
+                            )
 
 
 inFile <- "Compound_033850001_033875000.xml"
@@ -50,8 +51,12 @@ xmlData <- xmlToList(dataIn)
 for (i in 1:length(xmlData)) {
     current_compound <- xmlData[[i]]
     
-    current_compound_properties <- current_compound[["PC-Compound_props"]]
+    current_compound_id <- as.numeric(current_compound$"PC-Compound_id"$"PC-CompoundType"$"PC-CompoundType_id"$"PC-CompoundType_id_cid")
     
+    
+    
+    
+    current_compound_properties <- current_compound[["PC-Compound_props"]]
 
     if (grepl(pattern="IUPAC Name", x=current_compound_properties[[11]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label")) {
         current_IUPAC_name <- current_compound_properties[[11]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
@@ -89,7 +94,8 @@ for (i in 1:length(xmlData)) {
     }
     
     
-    new_compound <- data.frame(IUPAC_Name=current_IUPAC_name, 
+    new_compound <- data.frame(PubChem_ID=current_compound_id, 
+                               IUPAC_Name=current_IUPAC_name, 
                                InChIKey=current_InChIKey, 
                                Formula=current_formula,
                                Exact_Mass=current_exact_mass,
