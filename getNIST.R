@@ -5,7 +5,7 @@ results<-data.frame(Name=character(),InChIKey=character(),Formula=character(),MW
 
 fileLines<-readLines(file("mainlib.MSP",open="r"))
 i=1
-while (i < length(fileLines)){
+while(i<length(fileLines)){
   if(length(grep("Name:",fileLines[i]))>0){
     cpdName=substr(gsub(" ","",fileLines[i]),6,nchar(gsub(" ","",fileLines[i])))
     if(length(grep("Related_CAS#:",fileLines[i+1]))>0){
@@ -19,8 +19,14 @@ while (i < length(fileLines)){
     
     tmp<-data.frame(Name=cpdName,InChIKey=cpdInChIKey,Formula=cpdFormula,MW=cpdMW,ExactMass=cpdExactMass,CASNO=cpdCASNO)
     results<-rbind(results,tmp)
-    
-    i=i+5
+    if(length(grep("Comment:",fileLines[i+7]))>0){
+      numPeaks=substr(gsub(" ","",fileLines[i+8]),10,nchar(gsub(" ","",fileLines[i+8])))
+      i=i+8+as.integer(numPeaks)
+    }
+    else{
+      numPeaks=substr(gsub(" ","",fileLines[i+7]),10,nchar(gsub(" ","",fileLines[i+7])))
+      i=i+7+as.integer(numPeaks)
+    }
   }
   i=i+1
 }
