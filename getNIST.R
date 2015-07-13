@@ -11,10 +11,27 @@ while(i<length(fileLines)){
     if(length(grep("Related_CAS#:",fileLines[i+1]))>0){
       i=i+1
     }
+    if(length(grep("Salt:",fileLines[i+1]))>0){
+      i=i+1
+    }
+    
+    
+    
     cpdInChIKey=substr(gsub(" ","",fileLines[i+1]),10,nchar(gsub(" ","",fileLines[i+1])))
     cpdFormula=substr(gsub(" ","",fileLines[i+2]),9,nchar(gsub(" ","",fileLines[i+2])))
     cpdMW=substr(gsub(" ","",fileLines[i+3]),4,nchar(gsub(" ","",fileLines[i+3])))
-    cpdExactMass=substr(gsub(" ","",fileLines[i+4]),11,nchar(gsub(" ","",fileLines[i+4])))
+    
+    
+    if(length(grep("ExactMass:",fileLines[i+4]))>0){
+      cpdExactMass=substr(gsub(" ","",fileLines[i+4]),11,nchar(gsub(" ","",fileLines[i+4])))
+    }
+    else{
+      cpdExactMass="NA"
+      i=i-1
+    }
+    
+    
+    
     cpdCASNO=substr(gsub(" ","",fileLines[i+5]),7,nchar(gsub(" ","",fileLines[i+5])))
     
     tmp<-data.frame(Name=cpdName,InChIKey=cpdInChIKey,Formula=cpdFormula,MW=cpdMW,ExactMass=cpdExactMass,CASNO=cpdCASNO)
