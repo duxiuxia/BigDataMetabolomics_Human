@@ -18,7 +18,7 @@ rm(list=ls())
 # ===========================================================
 # set working directory in RStudio console using setwd() 
 # ===========================================================
-
+setwd("C:/Users/matt/Desktop/PubChemMetabolites/group_1")
 
 
 
@@ -41,7 +41,7 @@ all_compounds <- data.frame(PubChem_ID=numeric(),
                             )
 
 
-inFile <- "Compound_033850001_033875000.xml"
+inFile <- "Compound_000000001_000025000.xml"
 
 dataIn <- xmlParse(inFile)
 
