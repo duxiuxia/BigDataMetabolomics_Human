@@ -70,44 +70,44 @@ for (i in 1:length(masses)) {
                 
                 # retrieve info for the specific compound and store the info in a .txt file
                 download.file(query_2, destfile=filename, method="auto",quiet=T)
-                
-                # parse the .txt file
-                fileinfo <- paste(readLines(filename)) # Is paste necessary here?
-                
-                for (line in fileinfo) {
-                    if (length(grep("ENTRY", line)) > 0) {
-                        cpdEntry <- substr(x=gsub(pattern=" ", replacement="", x=line), 
-                                           start=6, 
-                                           stop=nchar(gsub(pattern=" ", replacement="", x=line))-8)
-                    }
-                    
-                    if (length(grep("NAME",line)) > 0) {
-                        cpdName<-substr(x=gsub(pattern=" ", replacement="", x=line),
-                                        start=5,
-                                        stop=nchar(gsub(pattern=" ", replacement="", x=line)))
-                    }
-                    
-                    if (length(grep("FORMULA",line)) > 0) {
-                        cpdFormula<-substr(x=gsub(pattern=" ", replacement="", x=line),
-                                           start=8,
-                                           stop=nchar(gsub(pattern=" ", replacement="", x=line)))
-                    }
-                    
-                    if (length(grep("EXACT_MASS",line)) > 0) {
-                        cpdMass<-substr(x=gsub(pattern=" ", replacement="", x=line),
-                                        start=11,
-                                        stop=nchar(gsub(pattern=" ", replacement="", x=line)))
-                    }
-                    
-                }
-                
-                newcpd <- data.frame(Entry=cpdEntry, Name=cpdName, Formula=cpdFormula, Exact_Mass=cpdMass)
-                
-                results <- rbind(unique(results), newcpd)
             }
+            # parse the .txt file
+            fileinfo <- paste(readLines(filename)) # Is paste necessary here?
+                
+            for (line in fileinfo) {
+                  if (length(grep("ENTRY", line)) > 0) {
+                      cpdEntry <- substr(x=gsub(pattern=" ", replacement="", x=line), 
+                                         start=6, 
+                                         stop=nchar(gsub(pattern=" ", replacement="", x=line))-8)
+                  }
+                    
+                  if (length(grep("NAME",line)) > 0) {
+                      cpdName<-substr(x=gsub(pattern=" ", replacement="", x=line),
+                                      start=5,
+                                      stop=nchar(gsub(pattern=" ", replacement="", x=line)))
+                  }
+                    
+                  if (length(grep("FORMULA",line)) > 0) {
+                      cpdFormula<-substr(x=gsub(pattern=" ", replacement="", x=line),
+                                         start=8,
+                                         stop=nchar(gsub(pattern=" ", replacement="", x=line)))
+                  }
+                    
+                  if (length(grep("EXACT_MASS",line)) > 0) {
+                      cpdMass<-substr(x=gsub(pattern=" ", replacement="", x=line),
+                                      start=11,
+                                      stop=nchar(gsub(pattern=" ", replacement="", x=line)))
+                  }
+                    
+              }
+                
+              newcpd <- data.frame(Entry=cpdEntry, Name=cpdName, Formula=cpdFormula, Exact_Mass=cpdMass)
+                
+              results <- rbind(unique(results), newcpd)
         }
     }
 }
+
 
 
 write.csv(unique(results), file="KEGGDatabaseResults.csv")
