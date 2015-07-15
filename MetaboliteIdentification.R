@@ -1,10 +1,7 @@
-setwd("C:/Users/matt/Desktop/HMDBMetabolites")
+setwd("C:/Users/matt/Desktop/MetaboliteDB")
 HMDBdb<-read.table("")
-setwd("C:/Users/matt/Desktop/KEGGMetabolites")
 KEGGdb<-read.table("")
-setwd("C:/Users/matt/Desktop/NISTMetabolites")
 NISTdb<-read.table("")
-setwd("C:/Users/matt/Desktop/PubChemMetaboblites")
 PubChemdb<-read.table("")
 
 setwd("C:/Users/matt/Desktop")
