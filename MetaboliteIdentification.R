@@ -1,19 +1,33 @@
+###########################################
+#   Set working directory for Databases
+###########################################
 setwd("C:/Users/matt/Desktop/MetaboliteDB")
 HMDBdb<-read.table("")
 KEGGdb<-read.table("")
 NISTdb<-read.table("")
 PubChemdb<-read.table("")
 
+
+#####################################
+#   Set Directory for unknowns to be run
+#####################################
+
 setwd("C:/Users/matt/Desktop")
 unknowns <- read.table("")
 
+
+
 PPMTolerance=10
+
+
 results=data.frame(MetaboliteMZ=character(),DataBase=character(),FoundID=character())
+
 
 HMDBList=sort(HMDBdb$V1)
 KEGGList=sort(KEGGdb$V1)
 NISTList=sort(NISTdb$V1)
 PubChemList=sort(PubChemdb$V1)
+#gets and sorts the list of mz values
 
 
 for(metabolite in sort(unknowns)){
@@ -81,3 +95,5 @@ for(metabolite in sort(unknowns)){
     }
   }
 }
+
+write.csv("IdentifiedMetabolites,csv",results)
