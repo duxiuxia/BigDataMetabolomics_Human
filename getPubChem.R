@@ -31,11 +31,12 @@ library(XML)
 
 
 ZipFiles <- list.files(path=getwd(),pattern="*.gz")
-
+#get all of the zipped files
 for(zipfile in ZipFiles){
   
   unzip(zipfile)
   fileName <- sub_str(unzip,start=1,-4)
+  #unzip the files and get the name from that file without the .gz
   
   
   all_compounds <- data.frame(PubChem_ID=numeric(), 
@@ -114,7 +115,6 @@ for(zipfile in ZipFiles){
   file.remove(fileName)  
 }
 
-index <- regexpr(pattern=".xml", text=inFile)
-out_file_name <- paste(substr(x=inFile, start=1, stop=index-1), ".csv", sep="")
+out_file_name <- paste(basename(getwd()), ".csv", sep="")
   
 write.csv(x=all_compounds, file=out_file_name)
