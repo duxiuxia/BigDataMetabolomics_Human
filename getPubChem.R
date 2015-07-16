@@ -20,7 +20,7 @@ rm(list=ls())
 # ===========================================================
 setwd("C:/Users/matt/Desktop/PubChemMetabolites/group_1")
 
-
+MainDirectory <- getwd()
 
 
 if (!is.element("XML", installed.packages()[,1])) {
@@ -28,14 +28,29 @@ if (!is.element("XML", installed.packages()[,1])) {
 }
 
 library(XML)
+if (!is.element("R.utils", installed.packages()[,1])) {
+  install.packages("R.utils")
+}
+library(R.utils)
 
 
 ZipFiles <- list.files(path=getwd(),pattern="*.gz")
-#get all of the zipped files
+#get all of the gzipped files
+dir.create(file.path(MainDirectory,"Temp"),showWarnings=FALSE)
+pathToTemp <- paste(MainDirectory, "Temp", sep=.Platform$file.sep)
+#Create a temp dir to store unzipped files and then remove
+#record the path to that temp dir
+
+
 for(zipfile in ZipFiles){
+  file.copy(from=paste(MainDirectory, zipfile, sep=.Platform$file.sep), 
+            to=paste(pathToTemp, zipfile, sep=.Platform$file.sep))
+  #copy the .gz file to Temp directory
   
-  unzip(zipfile)
-  fileName <- sub_str(unzip,start=1,-4)
+  setwd(pathToTemp)
+  gunzip(zipfile)
+  #go to that temp dir and unzip file
+  fileName <- sub_str(zipfile,start=1,-4)
   #unzip the files and get the name from that file without the .gz
   
   
@@ -112,7 +127,9 @@ for(zipfile in ZipFiles){
     
     all_compounds <- rbind(all_compounds, new_compound)
   }
-  file.remove(fileName)  
+  file.remove(fileName)
+  setwd(MainDirectory)
+  #remove the unzipped file for storage space
 }
 
 out_file_name <- paste(basename(getwd()), ".csv", sep="")
@@ -120,21 +137,3 @@ out_file_name <- paste(basename(getwd()), ".csv", sep="")
 write.csv(x=all_compounds, file=out_file_name)
 
 
-
-
-
-
-# ======================
-if (!is.element("R.utils", installed.packages()[,1])) {
-    install.packages("R.utils")
-}
-library(R.utils)
-
-gunzip(file_name)
-
-
-file.copy(from=paste(getwd(), file_name, sep=.Platform$file.sep), 
-          to=paste("/Users/xdu4/Documents/Duxiuxia/Temp", file_name, sep=.Platform$file.sep))
-
-file.remove(paste("/Users/xdu4/Documents/Duxiuxia/Temp", file_name, sep=.Platform$file.sep))
-# ========================
