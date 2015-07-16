@@ -118,3 +118,23 @@ for(zipfile in ZipFiles){
 out_file_name <- paste(basename(getwd()), ".csv", sep="")
   
 write.csv(x=all_compounds, file=out_file_name)
+
+
+
+
+
+
+# ======================
+if (!is.element("R.utils", installed.packages()[,1])) {
+    install.packages("R.utils")
+}
+library(R.utils)
+
+gunzip(file_name)
+
+
+file.copy(from=paste(getwd(), file_name, sep=.Platform$file.sep), 
+          to=paste("/Users/xdu4/Documents/Duxiuxia/Temp", file_name, sep=.Platform$file.sep))
+
+file.remove(paste("/Users/xdu4/Documents/Duxiuxia/Temp", file_name, sep=.Platform$file.sep))
+# ========================
