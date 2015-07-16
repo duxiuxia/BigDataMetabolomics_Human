@@ -19,7 +19,7 @@ rm(list=ls())
 # ================================================
 # set working directory in console using setwd()
 # ================================================
-
+setwd("C:/Users/matt/Desktop/KEGGMetabolites")
 
 
 
@@ -36,6 +36,7 @@ if (!file.exists(fileName)) {
     file.create(fileName)
 }
 
+error_message=""
 
 
 for (i in 1:length(masses)) {
@@ -50,10 +51,7 @@ for (i in 1:length(masses)) {
       #If an empty file do nothing
       
         warning_message <- paste("No compounds in KEGG for mass = ", current_mass, ".")
-        
-        cat(warning_message, file=fileName, sep="\n", append=T)
-        
-        cat(warning_message, sep="\n")
+        error_message <- paste(error_message,warning_message,sep="\n")
     }
     else{
         dataIn <- read.table(query_1)
@@ -109,5 +107,5 @@ for (i in 1:length(masses)) {
 }
 
 
-
+cat(error_message, file="ErrorFile.txt", sep="\n", append=T)
 write.csv(unique(results), file="KEGGDatabaseResults.csv")
