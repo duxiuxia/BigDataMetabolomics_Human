@@ -99,7 +99,7 @@ for(zipfile in ZipFiles){
       if(grepl(pattern="InChIKey", x=current_compound_properties[[13]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label")){
         current_InChIKey <- current_compound_properties[[13]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
       }else{
-        current_InChiKey <- NA
+        current_InChIKey <- NA
       }
     }else{
       current_InChIKey <- NA
