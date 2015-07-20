@@ -75,7 +75,7 @@ for(zipfile in ZipFiles){
     current_compound <- xmlData[[i]]
     
     current_compound_id <- as.numeric(current_compound$"PC-Compound_id"$"PC-CompoundType"$"PC-CompoundType_id"$"PC-CompoundType_id_cid")
-    
+
     
     
     
@@ -84,35 +84,35 @@ for(zipfile in ZipFiles){
     if (class(try(grepl(pattern="IUPAC Name", x=current_compound_properties[[11]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label"),silent=TRUE))!="try-error") {
       current_IUPAC_name <- current_compound_properties[[11]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
     }else{
-      current_IUPAC_name <- "NA"
+      current_IUPAC_name <- NA
     }
     
     
     if (class(try(grepl(pattern="InChIKey", x=current_compound_properties[[13]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label"),silent=TRUE))!="try-error"){
       current_InChIKey <- current_compound_properties[[13]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
     }else{
-      current_InChIKey <- "NA"
+      current_InChIKey <- NA
     }
     
-    if (class(try((grepl(pattern="Mass", x=current_compound_properties[[15]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label" )) && 
-           (grepl(pattern="Exact", x=current_compound_properties[[15]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_name" )),silent=TRUE))!="try-error") {
+    if ((class(try(grepl(pattern="Mass", x=current_compound_properties[[15]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label" ),silent=TRUE))!="try-error") && 
+           (class(try(grepl(pattern="Exact", x=current_compound_properties[[15]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_name" ),silent=TRUE))!="try-error")) {
       current_exact_mass <- as.numeric(current_compound_properties[[15]]$"PC-InfoData_value"$"PC-InfoData_value_fval")
     }else{
-      current_exact_mass <- 0
+      current_exact_mass <- NA
     }
     
     
     if (class(try(grepl(pattern="Molecular Formula", x=current_compound_properties[[16]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label" ),silent=TRUE))!="try-error"){
       current_formula <- current_compound_properties[[16]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
     }else{
-      current_formula <- "NA"
+      current_formula <- NA
     }
     
     
     if (class(try(grepl(pattern="Molecular Weight", x=current_compound_properties[[17]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label" ) ,silent=TRUE))!="try-error"){
       current_molecular_weight <- as.numeric(current_compound_properties[[17]]$"PC-InfoData_value"$"PC-InfoData_value_fval")
     }else{
-      current_molecular_weight <- 0
+      current_molecular_weight <- NA
     }
     
     
