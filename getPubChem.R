@@ -81,36 +81,62 @@ for(zipfile in ZipFiles){
     
     current_compound_properties <- current_compound[["PC-Compound_props"]]
     
+    #First if statement checks for index out of bounds error
+    #nested if statement checks for corresponding value ex. IUPAC Name
     if (class(try(grepl(pattern="IUPAC Name", x=current_compound_properties[[11]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label"),silent=TRUE))!="try-error") {
-      current_IUPAC_name <- current_compound_properties[[11]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
+      if(grepl(pattern="IUPAC Name", x=current_compound_properties[[11]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label")){
+        current_IUPAC_name <- current_compound_properties[[11]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
+      }else{
+        current_IUPAC_name <- NA
+      }
+      
     }else{
       current_IUPAC_name <- NA
     }
     
     
     if (class(try(grepl(pattern="InChIKey", x=current_compound_properties[[13]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label"),silent=TRUE))!="try-error"){
-      current_InChIKey <- current_compound_properties[[13]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
+      if(grepl(pattern="InChIKey", x=current_compound_properties[[13]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label")){
+        current_InChIKey <- current_compound_properties[[13]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
+      }else{
+        current_InChiKey <- NA
+      }
     }else{
       current_InChIKey <- NA
     }
     
     if ((class(try(grepl(pattern="Mass", x=current_compound_properties[[15]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label" ),silent=TRUE))!="try-error") && 
            (class(try(grepl(pattern="Exact", x=current_compound_properties[[15]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_name" ),silent=TRUE))!="try-error")) {
-      current_exact_mass <- as.numeric(current_compound_properties[[15]]$"PC-InfoData_value"$"PC-InfoData_value_fval")
+         
+      if(grepl(pattern="Mass", x=current_compound_properties[[15]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label" )&&
+           grepl(pattern="Exact", x=current_compound_properties[[15]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_name" )){
+        
+        current_exact_mass <- as.numeric(current_compound_properties[[15]]$"PC-InfoData_value"$"PC-InfoData_value_fval")
+      }else{
+        current_exact_mass <- NA
+      }
     }else{
       current_exact_mass <- NA
     }
     
     
     if (class(try(grepl(pattern="Molecular Formula", x=current_compound_properties[[16]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label" ),silent=TRUE))!="try-error"){
-      current_formula <- current_compound_properties[[16]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
+      if(grepl(pattern="Molecular Formula", x=current_compound_properties[[16]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label")){
+        current_formula <- current_compound_properties[[16]]$"PC-InfoData_value"$"PC-InfoData_value_sval"
+      }else{
+        current_formula <- NA
+      }
     }else{
       current_formula <- NA
     }
     
     
     if (class(try(grepl(pattern="Molecular Weight", x=current_compound_properties[[17]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label" ) ,silent=TRUE))!="try-error"){
-      current_molecular_weight <- as.numeric(current_compound_properties[[17]]$"PC-InfoData_value"$"PC-InfoData_value_fval")
+      if(grepl(pattern="Molecular Weight", x=current_compound_properties[[17]]$"PC-InfoData_urn"$"PC-Urn"$"PC-Urn_label" )){
+        current_molecular_weight <- as.numeric(current_compound_properties[[17]]$"PC-InfoData_value"$"PC-InfoData_value_fval")
+      }else{
+        current_molecular_weight <- NA
+      }
     }else{
       current_molecular_weight <- NA
     }
