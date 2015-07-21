@@ -16,9 +16,15 @@ rm(list=ls())
 
 
 # ===========================================================
-# set working directory in RStudio console using setwd() 
+# set working directory in CMD Line by passing dir as variable
 # ===========================================================
-setwd("C:/Users/matt/Desktop/PubChemMetabolites/group_1")
+args <- commandArgs(trailingOnly = TRUE)
+workingDir <- as.character(args[1])
+
+
+
+
+setwd(workingDir)
 
 MainDirectory <- getwd()
 
