@@ -74,8 +74,11 @@ for(zipfile in ZipFiles){
   for (i in 1:length(xmlData)) {
     current_compound <- xmlData[[i]]
     
-    current_compound_id <- as.numeric(current_compound$"PC-Compound_id"$"PC-CompoundType"$"PC-CompoundType_id"$"PC-CompoundType_id_cid")
-
+    if(is.recursive(current_compound)){
+      current_compound_id <- as.numeric(current_compound$"PC-Compound_id"$"PC-CompoundType"$"PC-CompoundType_id"$"PC-CompoundType_id_cid")
+    }else{
+      next
+    }
     
     
     
