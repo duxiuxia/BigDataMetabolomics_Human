@@ -47,6 +47,13 @@ pathToTemp <- paste(MainDirectory, "Temp", sep=.Platform$file.sep)
 #Create a temp dir to store unzipped files and then remove
 #record the path to that temp dir
 
+all_compounds <- data.frame(PubChem_ID=numeric(), 
+                            IUPAC_Name=character(), 
+                            InChIKey=character(), 
+                            Formula=character(),
+                            Exact_Mass=numeric(),
+                            Molecular_Weight=numeric()
+)
 
 for(zipfile in ZipFiles){
   file.copy(from=paste(MainDirectory, zipfile, sep=.Platform$file.sep), 
@@ -60,16 +67,7 @@ for(zipfile in ZipFiles){
   #unzip the files and get the name from that file without the .gz
   
   
-  all_compounds <- data.frame(PubChem_ID=numeric(), 
-                              IUPAC_Name=character(), 
-                              InChIKey=character(), 
-                              Formula=character(),
-                              Exact_Mass=numeric(),
-                              Molecular_Weight=numeric()
-  )
-  
-  
-  
+
   inFile <- fileName
   
   dataIn <- xmlParse(inFile)
@@ -165,6 +163,7 @@ for(zipfile in ZipFiles){
   setwd(MainDirectory)
   #remove the unzipped file for storage space
 }
+
 
 out_file_name <- paste(basename(getwd()), ".csv", sep="")
   
