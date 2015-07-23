@@ -35,25 +35,32 @@ HMDBList=sort(HMDBdb$Monisotopic_weight)
 KEGGList=sort(KEGGdb$Exact_Mass)
 NISTList=sort(NISTdb$ExactMass)
 
+HMDBList <- HMDBList[!is.na(HMDBList)]
+KEGGList <- KEGGList[!is.na(KEGGList)]
+NISTList <- NISTList[!is.na(NISTList)]
+
+HMDBList <- HMDBList[!is.null(HMDBList)]
+KEGGList <- KEGGList[!is.null(KEGGList)]
+NISTList <- NISTList[!is.null(NISTList)]
 #PubChemList=sort(PubChemdb$V1)
 
 
 #gets and sorts the list of mz values
 
 
-for(metabolite in sort(unknowns$query_mz)){
+for(metabolite in sort(unknowns$Query_mz)){
     Flag = 0
     for(mzvalue in HMDBList){      
-        if(((mzvalue-metabolite)/metabolite*1000000)<-PPMTolerance){
+        if(((mzvalue-metabolite)/metabolite*1000000) < -PPMTolerance){
             HMDBList=HMDBList[HMDBList != mzvalue]
             #reupdate list in HMDB for future values since they are larger
         }
-        if((((mzvalue-metabolite)/metabolite*1000000)<PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000)>-PPMTolerance)){
-            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="HMDB",FoundID=paste(HMDBdb[which(HMDBdb$V1==mzvalue)],sep=" ")))
+        if((((mzvalue-metabolite)/metabolite*1000000)<PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000) > -PPMTolerance)){
+            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="HMDB",FoundID=paste(HMDBdb[which(HMDBdb$Monisotopic_weight==mzvalue),],sep=" ")))
             Flag = 1
             #update results for a found metabolite
         }
-        if (((mzvalue-metabolite)/metabolite*1000000)>PPMTolerance){
+        if (((mzvalue-metabolite)/metabolite*1000000) > PPMTolerance){
             break #get out of for loop because all other values are larger
             #go to next database
         }
@@ -61,16 +68,16 @@ for(metabolite in sort(unknowns$query_mz)){
   
   
     for(mzvalue in KEGGList){
-        if(((mzvalue-metabolite)/metabolite*1000000)<-PPMTolerance){
+        if(((mzvalue-metabolite)/metabolite*1000000) < -PPMTolerance){
             KEGGList=KEGGList[KEGGList != mzvalue]
             #reupdate list in HMDB for future values since they are larger
         }    
-        if((((mzvalue-metabolite)/metabolite*1000000)<PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000)>-PPMTolerance)){
-            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="KEGG",FoundID=paste(KEGGdb[which(KEGGdb$V1==mzvalue)],sep=" ")))
+        if((((mzvalue-metabolite)/metabolite*1000000) < PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000) > -PPMTolerance)){
+            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="KEGG",FoundID=paste(KEGGdb[which(KEGGdb$Exact_Mass==mzvalue),],sep=" ")))
             Flag = 1
             #update results for a found metabolite
         }
-        if (((mzvalue-metabolite)/metabolite*1000000)>PPMTolerance){
+        if (((mzvalue-metabolite)/metabolite*1000000) > PPMTolerance){
             break #get out of for loop because all other values are larger
             #go to next database
         }
@@ -78,16 +85,16 @@ for(metabolite in sort(unknowns$query_mz)){
   
   
     for(mzvalue in NISTList){       
-        if(((mzvalue-metabolite)/metabolite*1000000)<-PPMTolerance){
+        if(((mzvalue-metabolite)/metabolite*1000000)< - PPMTolerance){
             NISTList=NISTList[NISTList != mzvalue]
             #reupdate list in HMDB for future values since they are larger
         }    
-        if((((mzvalue-metabolite)/metabolite*1000000)<PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000)>-PPMTolerance)){
-            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="NIST",FoundID=paste(NISTdb[which(NISTdb$V1==mzvalue)],sep=" ")))
+        if((((mzvalue-metabolite)/metabolite*1000000)<PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000) > -PPMTolerance)){
+            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="NIST",FoundID=paste(NISTdb[which(NISTdb$ExactMass==mzvalue),],sep=" ")))
             Flag = 1
             #update results for a found metabolite
         }
-        if (((mzvalue-metabolite)/metabolite*1000000)>PPMTolerance){
+        if (((mzvalue-metabolite)/metabolite*1000000) > PPMTolerance){
             break #get out of for loop because all other values are larger
             #go to next database
         }
@@ -100,7 +107,7 @@ for(metabolite in sort(unknowns$query_mz)){
 #            #reupdate list in HMDB for future values since they are larger
 #        }    
 #        if((((mzvalue-metabolite)/metabolite*1000000)<PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000)>-PPMTolerance)){
-#            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="PubChem",FoundID=paste(PubChemdb[which(PubChemdb$V1==mzvalue)],sep=" ")))
+#            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="PubChem",FoundID=paste(PubChemdb[which(PubChemdb$V1==mzvalue),],sep=" ")))
 #            Flag = 1
 #            #update results for a found metabolite
 #        }
