@@ -41,10 +41,19 @@ setwd("C:/Users/matt/Desktop/MetaboliteDB/")
 # !!! set working directory using setwd() here
 # ==============================================
 
-data=read.csv("HMDBMetaboliteList.csv")
+
+#For each database you must change 3 things,
+#1 the data read in filename
+#2 the mzvalues <- sort(data$      ) corresponding column
+#3 the results filename
+
+
+
+
+data=read.csv("NISTDatabaseResults.csv")
 
 #Reads in the data from the worksheet
-mzvalues <- sort(data$Monisotopic_weight)
+mzvalues <- sort(data$ExactMass)
 #Orders the mzvalues by the Query value
 
 
@@ -137,4 +146,4 @@ while (endFlag) {
     }
 }
 results <- data.frame(MZValues = unlist(results))
-write.csv(results,"HMDBQTClusterResults.csv")
+write.csv(results,"NISTQTClusterResults.csv")
