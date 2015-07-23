@@ -32,7 +32,7 @@ library(xlsx)
 # ==============================================================
 
 
-
+setwd("C:/Users/matt/Desktop/MetaboliteDB/")
 
 
 
@@ -41,23 +41,10 @@ library(xlsx)
 # !!! set working directory using setwd() here
 # ==============================================
 
-data1=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV1")
-data2=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV2")
-data3=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV3")
-data4=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV4")
-data5=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV5")
-data6=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV6")
-data7=read.xlsx("UnknownMetabolitesMZValues.xlsx",sheetName="NV7")
+data=read.csv("HMDBMetaboliteList.csv")
+
 #Reads in the data from the worksheet
-
-
-
-
-
-mzvalues <- rbind(data1,data2,data3,data4,data5,data6,data7)
-#combines all the rows into one dataset
-
-
+mzvalues <- sort(data$Monisotopic_weight)
 
 mzvalues <- mzvalues[ with(mzvalues,order(Query_mz)),]
 #Orders the mzvalues by the Query value
@@ -101,25 +88,6 @@ findSmallestDist_2 <- function(x) {
     II <- which(all_distance == min(all_distance))
     return(II)
 }
-
-
-
-
-findSmallestDist<-function(mzvalues){
-  i=2
-  smallestDist=mzvalues[2]-mzvalues[1]
-  smallestIndex=1
-  while (i<(length(mzvalues)-1)){
-    if (smallestDist>(mzvalues[i+1]-mzvalues[i])){
-      smallestDist = mzvalues[i+1]-mzvalues[i]
-      smallestIndex=i
-    }
-    i=i+1
-  }
-  return(smallestIndex)
-}
-
-
 
 
 extendCluster <- function(mzvalues,smallIndex,largeIndex,PPMTolerance){

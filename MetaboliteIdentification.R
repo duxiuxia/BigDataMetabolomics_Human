@@ -1,6 +1,10 @@
 
 #Needs xlsx package
-library(xlsx)
+if (!is.element("XML", installed.packages()[,1])) {
+    install.packages("XML")
+}
+
+library(XML)
 
 ###########################################
 #   Set working directory for Databases
