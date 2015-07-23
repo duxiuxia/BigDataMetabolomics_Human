@@ -10,6 +10,10 @@ HMDBdb<-read.csv("HMDBMetaboliteList.csv")
 KEGGdb<-read.csv("KEGGDatabaseResults.csv")
 NISTdb<-read.csv("NISTDatabaseResults.csv")
 
+HMDBdb[] <- lapply(HMDBdb, as.character)
+KEGGdb[] <- lapply(KEGGdb, as.character)
+NISTdb[] <- lapply(NISTdb, as.character)
+
 
 #####PubChemdb<-read.csv("")
 #----- Temporarily removed
@@ -42,6 +46,10 @@ NISTList <- NISTList[!is.na(NISTList)]
 HMDBList <- HMDBList[!is.null(HMDBList)]
 KEGGList <- KEGGList[!is.null(KEGGList)]
 NISTList <- NISTList[!is.null(NISTList)]
+
+HMDBList <- lapply(HMDBList, as.numeric)
+KEGGList <- lapply(KEGGList, as.numeric)
+NISTList <- lapply(NISTList, as.numeric)
 #PubChemList=sort(PubChemdb$V1)
 
 
@@ -56,8 +64,9 @@ for(metabolite in sort(unknowns$Query_mz)){
             #reupdate list in HMDB for future values since they are larger
         }
         if((((mzvalue-metabolite)/metabolite*1000000)<PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000) > -PPMTolerance)){
-            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="HMDB",FoundID=paste(HMDBdb[which(HMDBdb$Monisotopic_weight==mzvalue),],sep=" ")))
+            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="HMDB",FoundID=paste(HMDBdb[which(HMDBdb$Monisotopic_weight==as.character(mzvalue)),],collapse=" ")))
             Flag = 1
+            break
             #update results for a found metabolite
         }
         if (((mzvalue-metabolite)/metabolite*1000000) > PPMTolerance){
@@ -73,8 +82,9 @@ for(metabolite in sort(unknowns$Query_mz)){
             #reupdate list in HMDB for future values since they are larger
         }    
         if((((mzvalue-metabolite)/metabolite*1000000) < PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000) > -PPMTolerance)){
-            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="KEGG",FoundID=paste(KEGGdb[which(KEGGdb$Exact_Mass==mzvalue),],sep=" ")))
+            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="KEGG",FoundID=paste(KEGGdb[which(KEGGdb$Exact_Mass==as.character(mzvalue)),],collapse=" ")))
             Flag = 1
+            break
             #update results for a found metabolite
         }
         if (((mzvalue-metabolite)/metabolite*1000000) > PPMTolerance){
@@ -90,8 +100,9 @@ for(metabolite in sort(unknowns$Query_mz)){
             #reupdate list in HMDB for future values since they are larger
         }    
         if((((mzvalue-metabolite)/metabolite*1000000)<PPMTolerance)&(((mzvalue-metabolite)/metabolite*1000000) > -PPMTolerance)){
-            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="NIST",FoundID=paste(NISTdb[which(NISTdb$ExactMass==mzvalue),],sep=" ")))
+            results =rbind(results,data.frame(MetaboliteMZ=metabolite,DataBase="NIST",FoundID=paste(NISTdb[which(NISTdb$ExactMass==as.character(mzvalue)),],collapse=" ")))
             Flag = 1
+            break
             #update results for a found metabolite
         }
         if (((mzvalue-metabolite)/metabolite*1000000) > PPMTolerance){
@@ -123,4 +134,4 @@ for(metabolite in sort(unknowns$Query_mz)){
     }
 }
 
-write.csv("IdentifiedMetabolites.csv",results)
+write.csv(results,"IdentifiedMetabolites.csv")
