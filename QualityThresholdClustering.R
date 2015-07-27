@@ -42,22 +42,16 @@ setwd("C:/Users/matt/Desktop/MetaboliteDB/")
 # ==============================================
 
 
-#For each database you must change 3 things,
-#1 the data read in filename
-#2 the mzvalues <- sort(data$      ) corresponding column
-#3 the results filename
-
-
-
 
 data=read.csv("NISTDatabaseResults.csv")
-
+data$X=NULL
 #Reads in the data from the worksheet
 mzvalues <- sort(data$ExactMass)
 #Orders the mzvalues by the Query value
 
 
-results<-list()
+results<-data.frame(Name=character(),InChIKey=character(),Formula=character(),
+                    MW=character(),ExactMass=character(),CASNO=character())
 endFlag=T
 
 findSmallestDist_2 <- function(x) {
@@ -133,17 +127,33 @@ while (endFlag) {
         smallIndex=indexValues[1]
         largeIndex=indexValues[2]
         
-        results[[length(results)+1]]<-(mzvalues[smallIndex]+mzvalues[largeIndex])/2
+        
         
         removeValues=c(smallIndex:largeIndex)
+        cName=""
+        cInChIKey=""
+        cFormula=""
+        cMW=""
+        cExactMass=""
+        cCASNO=""
+        
+        for(cValue in removeValues){
+            cName<-paste(cName,data[which(data$ExactMass==mzvalues[cValue]),]$Name,sep=" ")
+            cInChIKey<-paste(cInChIKey,data[which(data$ExactMass==mzvalues[cValue]),]$InChIKey,sep=" ")
+            cFormula<-paste(cFormula,data[which(data$ExactMass==mzvalues[cValue]),]$Formula,sep=" ")
+            cMW<-paste(cMW,data[which(data$ExactMass==mzvalues[cValue]),]$MW,sep=" ")
+            cExactMass<-(mzvalues[smallIndex]+mzvalues[largeIndex])/2
+            cCASNO<-paste(cCASNO,data[which(data$ExactMass==mzvalues[cValue]),]$CASNO,sep=" ")
+        }
         mzvalues<-mzvalues[-removeValues]
         
-        
+        results<-rbind(results,data.frame(Name=cName,InChIKey=cInChIKey,Formula=cFormula,MW=cMW,ExactMass=cExactMass,CASNO=cCASNO))
     }
     else{
         endFlag=F
-        results<-c(results,mzvalues)
+
+        results<-rbind(results,data[which(data$ExactMass==as.character(mzvalues)),])
     }
 }
-results <- data.frame(MZValues = unlist(results))
+
 write.csv(results,"NISTQTClusterResults.csv")
