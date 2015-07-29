@@ -151,8 +151,9 @@ while (endFlag) {
     }
     else{
         endFlag=F
-
-        results<-rbind(results,data[which(data$ExactMass==as.character(mzvalues)),])
+        for(cValue in mzvalues){
+            results<-rbind(results,data[which(data$ExactMass==as.character(cValue)),])
+        }
     }
 }
 
