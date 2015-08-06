@@ -12,11 +12,19 @@ rm(list=ls())
 
 
 
-PPMTolerance=10
+PPMTolerance=3
 
+if (!is.element("rJava", installed.packages()[,1])) {
+    install.packages("rJava")
+}
 
+library(rJava)
 
+if (!is.element("xlsxjars", installed.packages()[,1])) {
+    install.packages("xlsxjars")
+}
 
+library(xlsxjars)
 
 if (!is.element("xlsx", installed.packages()[,1])) {
     install.packages("xlsx")
@@ -32,7 +40,7 @@ library(xlsx)
 # ==============================================================
 
 
-setwd("C:/Users/matt/Desktop/MetaboliteDB/")
+setwd("/users/matthewdeitz/Desktop/MetaboliteDB/")
 
 
 
@@ -50,7 +58,7 @@ mzvalues <- sort(data$ExactMass)
 #Orders the mzvalues by the Query value
 
 
-results<-data.frame(Name=character(),InChIKey=character(),Formula=character(),
+results<-data.frame(CenterMass = character(), Name=character(),InChIKey=character(),Formula=character(),
                     MW=character(),ExactMass=character(),CASNO=character())
 endFlag=T
 
@@ -136,25 +144,26 @@ while (endFlag) {
         cMW=""
         cExactMass=""
         cCASNO=""
-        
+        cCenterMass = (mzvalues[smallIndex]+mzvalues[largeIndex])/2
         for(cValue in removeValues){
-            cName<-paste(cName,data[which(data$ExactMass==mzvalues[cValue]),]$Name,sep=" ")
-            cInChIKey<-paste(cInChIKey,data[which(data$ExactMass==mzvalues[cValue]),]$InChIKey,sep=" ")
-            cFormula<-paste(cFormula,data[which(data$ExactMass==mzvalues[cValue]),]$Formula,sep=" ")
-            cMW<-paste(cMW,data[which(data$ExactMass==mzvalues[cValue]),]$MW,sep=" ")
-            cExactMass<-(mzvalues[smallIndex]+mzvalues[largeIndex])/2
-            cCASNO<-paste(cCASNO,data[which(data$ExactMass==mzvalues[cValue]),]$CASNO,sep=" ")
+            cName<-paste(cName,data[which(data$ExactMass==mzvalues[cValue]),]$Name,sep=", ")
+            cInChIKey<-paste(cInChIKey,data[which(data$ExactMass==mzvalues[cValue]),]$InChIKey,sep=", ")
+            cFormula<-paste(cFormula,data[which(data$ExactMass==mzvalues[cValue]),]$Formula,sep=", ")
+            cMW<-paste(cMW,data[which(data$ExactMass==mzvalues[cValue]),]$MW,sep=", ")
+            cExactMass<-paste(cExactMass,data[which(data$ExactMass==mzvalues[cValue]),]$ExactMass,sep=", ")
+            cCASNO<-paste(cCASNO,data[which(data$ExactMass==mzvalues[cValue]),]$CASNO,sep=", ")
         }
         mzvalues<-mzvalues[-removeValues]
         
-        results<-rbind(results,data.frame(Name=cName,InChIKey=cInChIKey,Formula=cFormula,MW=cMW,ExactMass=cExactMass,CASNO=cCASNO))
+        results<-rbind(results,data.frame(CenterMass = cCenterMass, Name=cName,InChIKey=cInChIKey,Formula=cFormula,MW=cMW,ExactMass=cExactMass,CASNO=cCASNO))
     }
     else{
         endFlag=F
         for(cValue in mzvalues){
-            results<-rbind(results,data[which(data$ExactMass==as.character(cValue)),])
+            tempdf = data[which(data$ExactMass==as.character(cValue)),]
+            tempdf$CenterMass <- cValue
+            results<-rbind(results,tempdf)
         }
     }
 }
 
-write.csv(results,"NISTQTClusterResults.csv")
