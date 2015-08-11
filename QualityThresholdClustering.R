@@ -166,7 +166,7 @@ while (endFlag) {
     else{
         endFlag=F
         for(cValue in mzvalues){
-            temdf <- data
+            tempdf <- data
             templist <- data$ExactMass
             tempdf$CenterMass <- templist
             results<-rbind(results,tempdf)
