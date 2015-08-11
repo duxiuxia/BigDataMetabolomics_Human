@@ -32,7 +32,11 @@ if (!is.element("xlsx", installed.packages()[,1])) {
 
 library(xlsx)
 
+if (!is.element("kulife", installed.packages()[,1])) {
+    install.packages("kulife")
+}
 
+library(kulife)
 
 
 # ==============================================================
@@ -55,6 +59,7 @@ data=read.csv("NISTDatabaseResults.csv")
 data$X=NULL
 #Reads in the data from the worksheet
 mzvalues <- sort(data$ExactMass)
+data <- data[order(data$ExactMass),]
 #Orders the mzvalues by the Query value
 
 
@@ -146,13 +151,14 @@ while (endFlag) {
         cCASNO=""
         cCenterMass = (mzvalues[smallIndex]+mzvalues[largeIndex])/2
         for(cValue in removeValues){
-            cName<-paste(cName,data[which(data$ExactMass==mzvalues[cValue]),]$Name,sep=", ")
-            cInChIKey<-paste(cInChIKey,data[which(data$ExactMass==mzvalues[cValue]),]$InChIKey,sep=", ")
-            cFormula<-paste(cFormula,data[which(data$ExactMass==mzvalues[cValue]),]$Formula,sep=", ")
-            cMW<-paste(cMW,data[which(data$ExactMass==mzvalues[cValue]),]$MW,sep=", ")
-            cExactMass<-paste(cExactMass,data[which(data$ExactMass==mzvalues[cValue]),]$ExactMass,sep=", ")
-            cCASNO<-paste(cCASNO,data[which(data$ExactMass==mzvalues[cValue]),]$CASNO,sep=", ")
+            cName<-paste(cName,data[cValue,]$Name,sep=", ")
+            cInChIKey<-paste(cInChIKey,data[cValue,]$InChIKey,sep=", ")
+            cFormula<-paste(cFormula,data[cValue,]$Formula,sep=", ")
+            cMW<-paste(cMW,data[cValue,]$MW,sep=", ")
+            cExactMass<-paste(cExactMass,data[cValue,]$ExactMass,sep=", ")
+            cCASNO<-paste(cCASNO,data[cValue,]$CASNO,sep=", ")
         }
+        data <- data[-removeValues,]
         mzvalues<-mzvalues[-removeValues]
         
         results<-rbind(results,data.frame(CenterMass = cCenterMass, Name=cName,InChIKey=cInChIKey,Formula=cFormula,MW=cMW,ExactMass=cExactMass,CASNO=cCASNO))
@@ -160,10 +166,11 @@ while (endFlag) {
     else{
         endFlag=F
         for(cValue in mzvalues){
-            tempdf = data[which(data$ExactMass==as.character(cValue)),]
-            tempdf$CenterMass <- cValue
+            temdf <- data
+            templist <- data$ExactMass
+            tempdf$CenterMass <- termplist
             results<-rbind(results,tempdf)
         }
     }
 }
-
+write.xml(results, "NistClusters.xml")
