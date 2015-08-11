@@ -168,7 +168,7 @@ while (endFlag) {
         for(cValue in mzvalues){
             temdf <- data
             templist <- data$ExactMass
-            tempdf$CenterMass <- termplist
+            tempdf$CenterMass <- templist
             results<-rbind(results,tempdf)
         }
     }
