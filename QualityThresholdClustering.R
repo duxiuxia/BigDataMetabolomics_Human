@@ -55,16 +55,16 @@ setwd("/users/matthewdeitz/Desktop/MetaboliteDB/")
 
 
 
-data=read.csv("NISTDatabaseResults.csv")
+data=read.csv("KEGGDatabaseResults.csv")
 data$X=NULL
 #Reads in the data from the worksheet
-mzvalues <- sort(data$ExactMass)
-data <- data[order(data$ExactMass),]
+mzvalues <- sort(data$Exact_Mass)
+data <- data[order(data$Exact_Mass),]
 #Orders the mzvalues by the Query value
 
 
-results<-data.frame(CenterMass = character(), Name=character(),InChIKey=character(),Formula=character(),
-                    MW=character(),ExactMass=character(),CASNO=character())
+results<-data.frame(CenterMass = character(), Name=character(),Entry=character(),Formula=character(),
+                    Exact_Mass=character())
 endFlag=T
 
 findSmallestDist_2 <- function(x) {
@@ -144,33 +144,29 @@ while (endFlag) {
         
         removeValues=c(smallIndex:largeIndex)
         cName=""
-        cInChIKey=""
+        cEntry=""
         cFormula=""
-        cMW=""
-        cExactMass=""
-        cCASNO=""
+        cExact_Mass=""
         cCenterMass = (mzvalues[smallIndex]+mzvalues[largeIndex])/2
         for(cValue in removeValues){
             cName<-paste(cName,data[cValue,]$Name,sep=", ")
-            cInChIKey<-paste(cInChIKey,data[cValue,]$InChIKey,sep=", ")
+            cEntry<-paste(cEntry,data[cValue,]$Entry,sep=", ")
             cFormula<-paste(cFormula,data[cValue,]$Formula,sep=", ")
-            cMW<-paste(cMW,data[cValue,]$MW,sep=", ")
-            cExactMass<-paste(cExactMass,data[cValue,]$ExactMass,sep=", ")
-            cCASNO<-paste(cCASNO,data[cValue,]$CASNO,sep=", ")
+            cExact_Mass<-paste(cExact_Mass,data[cValue,]$Exact_Mass,sep=", ")
+            #cMonisotopic_weight<-paste(cMonisotopic_weight,data[cValue,]$Monisotopic_weight,sep=", ")
         }
         data <- data[-removeValues,]
         mzvalues<-mzvalues[-removeValues]
         
-        results<-rbind(results,data.frame(CenterMass = cCenterMass, Name=cName,InChIKey=cInChIKey,Formula=cFormula,MW=cMW,ExactMass=cExactMass,CASNO=cCASNO))
+        results<-rbind(results,data.frame(CenterMass = cCenterMass, Name=cName,Entry=cEntry,Formula=cFormula,Exact_Mass=cExact_Mass))
     }
     else{
         endFlag=F
-        for(cValue in mzvalues){
-            tempdf <- data
-            templist <- data$ExactMass
-            tempdf$CenterMass <- templist
-            results<-rbind(results,tempdf)
-        }
+        tempdf <- data.frame(lapply(data, as.character), stringsAsFactors = FALSE)
+        templist <- as.character(data$Exact_Mass)
+        tempdf$CenterMass <- templist
+        results<-rbind(results,tempdf)
     }
 }
-write.xml(results, "NistClusters.xml")
+write.xml(results, file="KEGGClusterResults.xml")
+
