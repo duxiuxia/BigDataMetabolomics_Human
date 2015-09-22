@@ -14,24 +14,6 @@ rm(list=ls())
 
 PPMTolerance=3
 
-if (!is.element("rJava", installed.packages()[,1])) {
-    install.packages("rJava", lib="/projects/dulab_research/R_Libs", repos="http://cran.r-project.org")
-}
-
-library(rJava, lib.loc="/projects/dulab_research/R_Libs")
-
-if (!is.element("xlsxjars", installed.packages()[,1])) {
-    install.packages("xlsxjars", lib="/projects/dulab_research/R_Libs", repos="http://cran.r-project.org")
-}
-
-library(xlsxjars, lib.loc="/projects/dulab_research/R_Libs")
-
-if (!is.element("xlsx", installed.packages()[,1])) {
-    install.packages("xlsx", lib="/projects/dulab_research/R_Libs", repos="http://cran.r-project.org")
-}
-
-library(xlsx, lib.loc="/projects/dulab_research/R_Libs")
-
 if (!is.element("kulife", installed.packages()[,1])) {
     install.packages("kulife", lib="/projects/dulab_research/R_Libs", repos="http://cran.r-project.org")
 }
