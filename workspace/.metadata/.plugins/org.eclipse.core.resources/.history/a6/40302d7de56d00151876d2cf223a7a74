@@ -1,0 +1,271 @@
+package example;
+
+import org.w3c.dom.*;
+import javax.xml.parsers.*;
+import java.io.*;
+import java.util.ArrayList;
+
+public class AnalyzeUnknowns 
+{
+
+	public static void main(String[] args) 
+	{
+		int PPMTolerance = 10;
+		// TODO Auto-generated method stub
+		try{
+			ArrayList<Element> HMDBList = new ArrayList<>();
+			ArrayList<Element> KEGGList = new ArrayList<>();
+			ArrayList<Element> NISTList = new ArrayList<>();
+			//LinkedList<Eement> PUBCHEMList = new LinkedList<>();
+			
+			
+			
+			File keggInputFile = new File("/Users/MatthewDeitz/Desktop/MetaboliteDB/KEGGClusterResults.xml");
+			DocumentBuilderFactory keggdbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder keggdBuilder = keggdbFactory.newDocumentBuilder();
+			Document keggdoc = keggdBuilder.parse(keggInputFile);
+			keggdoc.getDocumentElement().normalize();
+			NodeList keggnList = keggdoc.getElementsByTagName("row");
+			for(int temp = 0; temp < keggnList.getLength();temp++)
+			{
+				Element e = ((Element) keggnList.item(temp));
+				if (!e.getElementsByTagName("CenterMass").item(0).getTextContent().equals("NA"))
+				{
+					KEGGList.add(e);
+				}
+			}
+			
+			File hmdbInputFile = new File("/Users/MatthewDeitz/Desktop/MetaboliteDB/HMDBClusters.xml");
+			DocumentBuilderFactory hmdbdbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder hmdbdBuilder = hmdbdbFactory.newDocumentBuilder();
+			Document hmdbdoc = hmdbdBuilder.parse(hmdbInputFile);
+			hmdbdoc.getDocumentElement().normalize();
+			NodeList hmdbnList = hmdbdoc.getElementsByTagName("row");
+			for(int temp = 0; temp < hmdbnList.getLength();temp++)
+			{
+				Element e = ((Element) hmdbnList.item(temp));
+				if (!e.getElementsByTagName("CenterMass").item(0).getTextContent().equals("NA"))
+				{
+					HMDBList.add(e);
+				}
+			}
+			
+			File nistInputFile = new File("/Users/MatthewDeitz/Desktop/MetaboliteDB/NISTClusters.xml");
+			DocumentBuilderFactory nistdbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder nistdBuilder = nistdbFactory.newDocumentBuilder();
+			Document nistdoc = nistdBuilder.parse(nistInputFile);
+			nistdoc.getDocumentElement().normalize();
+			NodeList nistnList = nistdoc.getElementsByTagName("row");
+			for(int temp = 0; temp < nistnList.getLength();temp++)
+			{
+				Element e = ((Element) nistnList.item(temp));
+				if (!e.getElementsByTagName("CenterMass").item(0).getTextContent().equals("NA"))
+				{
+					NISTList.add(e);
+				}
+			}
+			
+			/*
+			File pubInputFile = new File("/Users/MatthewDeitz/Desktop/MetaboliteDB/PUBCHEMlusterResults.xml");
+			DocumentBuilderFactory pubdbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder pubdBuilder = pubdbFactory.newDocumentBuilder();
+			Document pubdoc = pubdBuilder.parse(pubInputFile);
+			pubdoc.getDocumentElement().normalize();
+			NodeList pubnList = pubdoc.getElementsByTagName("row");
+			for(int temp = 0; temp < pubnList.getLength();temp++)
+			{
+				PUBCHEMList.add((Element)nList.item(temp));
+			}
+			*/
+			
+			
+			
+			
+			ArrayList <String> unknowns = new ArrayList<>();
+			BufferedReader br = new BufferedReader(new FileReader("/Users/MatthewDeitz/Desktop/test.txt"));
+			String line = "";
+			while ((line = br.readLine())!=null)
+			{
+				unknowns.add(line.trim());
+			}
+			br.close();
+			
+			
+			
+			FileWriter write = new FileWriter("/Users/MatthewDeitz/Desktop/results.txt");
+			PrintWriter results = new PrintWriter(write);
+			for(String unknown : unknowns)
+			{
+				double unknownmz = Double.parseDouble(unknown);
+				boolean found = false;
+				for(int temp = 0;temp < HMDBList.size();temp++)
+				{
+					Element HMDBMetabolite = HMDBList.get(temp);			
+					Double HMDBmz = Double.parseDouble(HMDBMetabolite.getElementsByTagName("CenterMass").item(0).getTextContent().trim());
+					if ((HMDBmz-unknownmz)/unknownmz*1000000 < -PPMTolerance)
+					{
+						//do nothing
+					}
+					else if ((HMDBmz-unknownmz)/unknownmz*1000000 > PPMTolerance)
+					{
+						//do nothing
+					}
+					else
+					{
+						
+						String exactMass = HMDBMetabolite.getElementsByTagName("Monisotopic_weight").item(0).getTextContent().trim();
+						if(exactMass.indexOf(',')<0)
+						{
+							results.println(unknown + ": Found in HMDB Database. Name: "+HMDBMetabolite.getElementsByTagName("Name").item(0).getTextContent());
+						}
+						else
+						{
+							String[] parts = HMDBMetabolite.getElementsByTagName("Monisotopic_weight").item(0).getTextContent().substring(1).split(",");
+							int index = 0;
+							int closestIndex = 0;
+							Double closestVal = 1.0;
+							for(String clustermz : parts)
+							{
+								Double mzValue = Double.parseDouble(clustermz);
+								if (mzValue - unknownmz < closestVal)
+									{
+										closestVal = mzValue;
+										closestIndex = index;
+									}
+								index++;
+							}
+							results.println(unknown + ": Found in HMDB Database. Name: "+HMDBMetabolite.getElementsByTagName("Name").item(0).getTextContent().split(",")[closestIndex]);
+							
+						}
+
+						found = true;
+					}
+					
+				}
+				
+				for(int temp = 0; temp < KEGGList.size();temp++)
+				{
+					Element KEGGMetabolite = KEGGList.get(temp);
+					Double KEGGmz = Double.parseDouble(KEGGMetabolite.getElementsByTagName("CenterMass").item(0).getTextContent().trim());
+					if ((KEGGmz-unknownmz)/unknownmz*1000000 < -PPMTolerance)
+					{
+						//do nothing
+					}
+					else if ((KEGGmz-unknownmz)/unknownmz*1000000 > PPMTolerance)
+					{
+						//do nothing
+					}
+					else
+					{
+						String exactMass = KEGGMetabolite.getElementsByTagName("Exact_Mass").item(0).getTextContent().trim();
+						if(exactMass.indexOf(',')<0)
+						{
+							results.println(unknown + ": Found in KEGG Database. Name: "+KEGGMetabolite.getElementsByTagName("Name").item(0).getTextContent());
+						}
+						else
+						{
+							String[] parts = KEGGMetabolite.getElementsByTagName("Exact_Mass").item(0).getTextContent().substring(1).split(",");
+							int index = 0;
+							int closestIndex = 0;
+							Double closestVal = 1.0;
+							for(String clustermz : parts)
+							{
+								Double mzValue = Double.parseDouble(clustermz);
+								if (mzValue - unknownmz < closestVal)
+									{
+										closestVal = mzValue;
+										closestIndex = index;
+									}
+								index++;
+							}
+							results.println(unknown + ": Found in KEGG Database. Name: "+KEGGMetabolite.getElementsByTagName("Name").item(0).getTextContent().split(",")[closestIndex]);
+							
+						}
+						
+						found = true;
+					}
+					
+				}
+				
+				for(int temp = 0; temp < NISTList.size();temp++)
+				{
+					Element NISTMetabolite = NISTList.get(temp);
+					Double NISTmz = Double.parseDouble(NISTMetabolite.getElementsByTagName("CenterMass").item(0).getTextContent().trim());
+					if ((NISTmz-unknownmz)/unknownmz*1000000 < -PPMTolerance)
+					{
+						//do nothing
+					}
+					else if ((NISTmz-unknownmz)/unknownmz*1000000 > PPMTolerance)
+					{
+						//do nothing
+					}
+					else
+					{
+						String exactMass = NISTMetabolite.getElementsByTagName("ExactMass").item(0).getTextContent().trim();
+						if(exactMass.indexOf(',')<0)
+						{
+							results.println(unknown + ": Found in NIST Database. Name: "+NISTMetabolite.getElementsByTagName("Name").item(0).getTextContent());
+						}
+						else
+						{
+							String[] parts = NISTMetabolite.getElementsByTagName("ExactMass").item(0).getTextContent().substring(1).split(",");
+							int index = 0;
+							int closestIndex = 0;
+							Double closestVal = 1.0;
+							for(String clustermz : parts)
+							{
+								Double mzValue = Double.parseDouble(clustermz);
+								if (mzValue - unknownmz < closestVal)
+									{
+										closestVal = mzValue;
+										closestIndex = index;
+									}
+								index++;
+							}
+							results.println(unknown + ": Found in HMDB Database. Name: "+NISTMetabolite.getElementsByTagName("Name").item(0).getTextContent().split(",")[closestIndex]);
+							
+						}
+						found = true;
+					}
+					
+				}
+				
+				/*
+			    for(Element PUBMetabolite : PUBList)
+				{
+					float PUBmz = Float.parseFloat(PUBMetabolite.getElementsByTagName("CenterMass").item(0).getTextContent());
+					if ((PUBmz-unknownmz)/unknownmz*1000000 < -PPMTolerance)
+					{
+						PUBList.remove(0);
+					}
+					else if ((PUBmz-unknownmz)/unknownmz*1000000 > PPMTolerance)
+					{
+						break;
+					}
+					else
+					{
+						//update results
+						found = true;
+						break;
+					}
+					
+				}
+				 */
+				
+				
+				if(!found)
+				{
+					//update results for NA
+					results.println(unknown + ": was not matched to any of the databases.");
+				}
+			}
+			
+			results.close();
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+
+	}
+
+}
