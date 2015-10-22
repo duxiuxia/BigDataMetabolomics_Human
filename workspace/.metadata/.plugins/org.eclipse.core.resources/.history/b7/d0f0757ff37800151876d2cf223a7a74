@@ -4,7 +4,6 @@ import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class AnalyzeUnknowns 
 {
@@ -14,15 +13,13 @@ public class AnalyzeUnknowns
 		int PPMTolerance = 10;
 		// TODO Auto-generated method stub
 		try{
-			//Generates a List of each database compounds
-			List<Element> HMDBList = new ArrayList<>();
-			List<Element> KEGGList = new ArrayList<>();
-			List<Element> NISTList = new ArrayList<>();
-			List<Element> PUBCHEMList = new ArrayList<>();
+			ArrayList<Element> HMDBList = new ArrayList<>();
+			ArrayList<Element> KEGGList = new ArrayList<>();
+			ArrayList<Element> NISTList = new ArrayList<>();
+			//LinkedList<Eement> PUBCHEMList = new LinkedList<>();
 			
 			
-			//For each database it has to load in the compounds and populate the lists from the XML file
-			//that is associated with it
+			
 			File keggInputFile = new File("/Users/MatthewDeitz/Desktop/MetaboliteDB/KEGGClusterResults.xml");
 			DocumentBuilderFactory keggdbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder keggdBuilder = keggdbFactory.newDocumentBuilder();
@@ -68,7 +65,7 @@ public class AnalyzeUnknowns
 				}
 			}
 			
-			
+			/*
 			File pubInputFile = new File("/Users/MatthewDeitz/Desktop/MetaboliteDB/PUBCHEMlusterResults.xml");
 			DocumentBuilderFactory pubdbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder pubdBuilder = pubdbFactory.newDocumentBuilder();
@@ -77,18 +74,14 @@ public class AnalyzeUnknowns
 			NodeList pubnList = pubdoc.getElementsByTagName("row");
 			for(int temp = 0; temp < pubnList.getLength();temp++)
 			{
-				Element e = ((Element) pubnList.item(temp));
-				if (!e.getElementsByTagName("CenterMass").item(0).getTextContent().equals("NA"))
-				{
-					PUBCHEMList.add(e);
-				}
+				PUBCHEMList.add((Element)nList.item(temp));
 			}
+			*/
 			
 			
 			
 			
-			//read in the unknown compounds to be matched to the databases into a list
-			List <String> unknowns = new ArrayList<>();
+			ArrayList <String> unknowns = new ArrayList<>();
 			BufferedReader br = new BufferedReader(new FileReader("/Users/MatthewDeitz/Desktop/test.txt"));
 			String line = "";
 			while ((line = br.readLine())!=null)
@@ -98,36 +91,34 @@ public class AnalyzeUnknowns
 			br.close();
 			
 			
-			//attempt to open the results file and paste if it has been found
+			
 			FileWriter write = new FileWriter("/Users/MatthewDeitz/Desktop/results.txt");
 			PrintWriter results = new PrintWriter(write);
-			for(String unknown : unknowns)//for all unknowns
+			for(String unknown : unknowns)
 			{
-				double unknownmz = Double.parseDouble(unknown);//parse the mz value into a double
+				double unknownmz = Double.parseDouble(unknown);
 				boolean found = false;
-				//format for searching every database
 				for(int temp = 0;temp < HMDBList.size();temp++)
 				{
-					Element HMDBMetabolite = HMDBList.get(temp);//get the element in the list		
-					Double HMDBmz = Double.parseDouble(HMDBMetabolite.getElementsByTagName("CenterMass").item(0).getTextContent().trim());//compare it with the center mass of the cluster
+					Element HMDBMetabolite = HMDBList.get(temp);			
+					Double HMDBmz = Double.parseDouble(HMDBMetabolite.getElementsByTagName("CenterMass").item(0).getTextContent().trim());
 					if ((HMDBmz-unknownmz)/unknownmz*1000000 < -PPMTolerance)
 					{
-						//do nothing because not within tolerance
+						//do nothing
 					}
 					else if ((HMDBmz-unknownmz)/unknownmz*1000000 > PPMTolerance)
 					{
-						//do nothing because not within tolerance
+						//do nothing
 					}
 					else
 					{
-						//matches the database
+						
 						String exactMass = HMDBMetabolite.getElementsByTagName("Monisotopic_weight").item(0).getTextContent().trim();
 						if(exactMass.indexOf(',')<0)
 						{
-							//if there is only one compound in the cluster
 							results.println(unknown+" www.hmdb.ca/metabolites/"+HMDBMetabolite.getElementsByTagName("Accession").item(0).getTextContent());
 						}
-						else //if it is matched with a cluster then find closest match in that cluster
+						else
 						{
 							String[] parts = HMDBMetabolite.getElementsByTagName("Monisotopic_weight").item(0).getTextContent().substring(1).split(", ");
 							int index = 0;
@@ -239,53 +230,30 @@ public class AnalyzeUnknowns
 					
 				}
 				
-				for(int temp = 0; temp < PUBCHEMList.size();temp++)
+				/*
+			    for(Element PUBMetabolite : PUBList)
 				{
-					Element PUBCHEMMetabolite = PUBCHEMList.get(temp);
-					Double PUBCHEMmz = Double.parseDouble(PUBCHEMMetabolite.getElementsByTagName("CenterMass").item(0).getTextContent().trim());
-					if ((PUBCHEMmz-unknownmz)/unknownmz*1000000 < -PPMTolerance)
+					float PUBmz = Float.parseFloat(PUBMetabolite.getElementsByTagName("CenterMass").item(0).getTextContent());
+					if ((PUBmz-unknownmz)/unknownmz*1000000 < -PPMTolerance)
 					{
-						//do nothing
+						PUBList.remove(0);
 					}
-					else if ((PUBCHEMmz-unknownmz)/unknownmz*1000000 > PPMTolerance)
+					else if ((PUBmz-unknownmz)/unknownmz*1000000 > PPMTolerance)
 					{
-						//do nothing
+						break;
 					}
 					else
 					{
-						String exactMass = PUBCHEMMetabolite.getElementsByTagName("ExactMass").item(0).getTextContent().trim();
-						if(exactMass.indexOf(',')<0)
-						{
-							results.println(unknown+" https://www.ncbi.nlm.nih.gov/pccompound/?term="+PUBCHEMMetabolite.getElementsByTagName("InChIKey").item(0).getTextContent());
-						}
-						else
-						{
-							String[] parts = PUBCHEMMetabolite.getElementsByTagName("ExactMass").item(0).getTextContent().substring(1).split(", ");
-							int index = 0;
-							int closestIndex = 0;
-							Double closestVal = 1.0;
-							for(String clustermz : parts)
-							{
-								Double mzValue = Double.parseDouble(clustermz);
-								if (mzValue - unknownmz < closestVal)
-									{
-										closestVal = mzValue;
-										closestIndex = index;
-									}
-								index++;
-							}
-							results.println(unknown+" https://www.ncbi.nlm.nih.gov/pccompound/?term="+PUBCHEMMetabolite.getElementsByTagName("InChIKey").item(0).getTextContent().split(", ")[closestIndex]);
-							
-						}
+						//update results
 						found = true;
+						break;
 					}
 					
 				}
+				 */
 				
 				
-				
-				
-				if(!found) //not matched to any database
+				if(!found)
 				{
 					//update results for NA
 					results.println(unknown + ": was not matched to any of the databases.");

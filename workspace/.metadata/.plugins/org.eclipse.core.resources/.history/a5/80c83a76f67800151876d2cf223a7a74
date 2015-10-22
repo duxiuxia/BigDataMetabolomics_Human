@@ -1,6 +1,6 @@
 package example;
 
-public class Metabolite //created class to hold information relevant to PubChem metabolites
+public class Metabolite 
 {
 	private String Name;
 	private String ID;
@@ -34,20 +34,5 @@ public class Metabolite //created class to hold information relevant to PubChem 
 	public String getInChIKey()
 	{
 		return InChIKey;
-	}
-	public String getCenterMass()
-	{
-		if(Mass.indexOf(',')<0)
-		{
-			return Mass;
-		}
-		else
-		{
-			String[] parts = Mass.split(",");
-			Double firstVal = Double.parseDouble(parts[0]);
-			Double lastVal = Double.parseDouble(parts[parts.length-1]);
-			return Double.toString((firstVal+lastVal)/2);
-		}
-			
 	}
 }

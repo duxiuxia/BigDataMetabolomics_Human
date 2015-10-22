@@ -128,7 +128,7 @@ public class QTCluster
 				centerMass.appendChild(doc.createTextNode(m.getCenterMass()));
 				rowElement.appendChild(centerMass);
 				
-				Element ExactMass = doc.createElement("ExactMass");
+				Element ExactMass = doc.createElement("CenterMass");
 				ExactMass.appendChild(doc.createTextNode(m.getMass()));
 				rowElement.appendChild(ExactMass);
 				
