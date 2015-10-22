@@ -54,7 +54,7 @@ setwd("/users/matthewdeitz/Desktop/MetaboliteDB/")
 # ==============================================
 
 
-
+#Define which Database you want to read
 data=read.csv("KEGGDatabaseResults.csv")
 data$X=NULL
 #Reads in the data from the worksheet
@@ -67,6 +67,8 @@ results<-data.frame(CenterMass = character(), Name=character(),Entry=character()
                     Exact_Mass=character())
 endFlag=T
 
+
+#A function that finds the compounds with the smallest mass difference
 findSmallestDist_2 <- function(x) {
     x1 <- x[-length(x)]
     x2 <- x[-1]
@@ -75,11 +77,13 @@ findSmallestDist_2 <- function(x) {
     return(II)
 }
 
-
+# a recursive function that will take the cluster indexes and try to extend them as 
+#much as possible without going over the user defined PPMTolerance
 extendCluster <- function(mzvalues,smallIndex,largeIndex,PPMTolerance){
   returnSmallIndex <- smallIndex
   returnLargeIndex <- largeIndex
 
+  #if the cluster is the first element in the array
   if (returnSmallIndex-1==0){
     if (((mzvalues[returnSmallIndex]+mzvalues[returnLargeIndex+1])/2
          -mzvalues[returnSmallIndex])/mzvalues[returnSmallIndex]
@@ -91,6 +95,7 @@ extendCluster <- function(mzvalues,smallIndex,largeIndex,PPMTolerance){
     }
   }
   
+  #if it is the last element in the array
   if (returnLargeIndex+1==length(mzvalues)){
     if (((mzvalues[returnSmallIndex-1]+mzvalues[returnLargeIndex])/2
          -mzvalues[returnSmallIndex-1])/mzvalues[returnSmallIndex-1]
@@ -102,9 +107,11 @@ extendCluster <- function(mzvalues,smallIndex,largeIndex,PPMTolerance){
     }
   }
   
+  #if not first or last then get the distance in both directions
   lowerDist=mzvalues[returnSmallIndex]-mzvalues[returnSmallIndex-1]
   upperDist=mzvalues[returnLargeIndex+1]-mzvalues[returnLargeIndex]
   
+  #whichever distance is smaller try adding it to the cluster
   if (lowerDist<upperDist){
     if (((mzvalues[returnSmallIndex-1]+mzvalues[returnLargeIndex])/2
          -mzvalues[returnSmallIndex-1])/mzvalues[returnSmallIndex-1]
@@ -128,6 +135,7 @@ extendCluster <- function(mzvalues,smallIndex,largeIndex,PPMTolerance){
 }
 
 while (endFlag) {
+    #get the index for the smallest distance compounds
     index <- findSmallestDist_2(mzvalues)
     if(length(index)>1){
         index <- index[1]
@@ -148,6 +156,7 @@ while (endFlag) {
         cFormula=""
         cExact_Mass=""
         cCenterMass = (mzvalues[smallIndex]+mzvalues[largeIndex])/2
+        # for all the vales in the cluster
         for(cValue in removeValues){
             cName<-paste(cName,data[cValue,]$Name,sep=", ")
             cEntry<-paste(cEntry,data[cValue,]$Entry,sep=", ")
@@ -155,13 +164,16 @@ while (endFlag) {
             cExact_Mass<-paste(cExact_Mass,data[cValue,]$Exact_Mass,sep=", ")
             #cMonisotopic_weight<-paste(cMonisotopic_weight,data[cValue,]$Monisotopic_weight,sep=", ")
         }
+        #remove the values from the list so they can't be added to any other clusters
         data <- data[-removeValues,]
         mzvalues<-mzvalues[-removeValues]
         
+        #add the results
         results<-rbind(results,data.frame(CenterMass = cCenterMass, Name=cName,Entry=cEntry,Formula=cFormula,Exact_Mass=cExact_Mass))
     }
     else{
         endFlag=F
+        #add all the results that aren't clustered as single clusters
         tempdf <- data.frame(lapply(data, as.character), stringsAsFactors = FALSE)
         templist <- as.character(data$Exact_Mass)
         tempdf$CenterMass <- templist

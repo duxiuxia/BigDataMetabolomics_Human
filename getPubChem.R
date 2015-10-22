@@ -65,10 +65,10 @@ all_compounds <- data.frame(PubChem_ID=numeric(),
 )
 
 
-for(f in 1:3){
-    zipfile <- ZipFiles[f]
+for(zipfile in ZipFiles){
+#for every zipped file in the directory
     
-    # for(zipfile in ZipFiles){
+    
     file.copy(from=paste(MainDirectory, zipfile, sep=.Platform$file.sep), 
               to=paste(pathToTemp, zipfile, sep=.Platform$file.sep))
     #copy the .gz file to Temp directory
@@ -86,6 +86,7 @@ for(f in 1:3){
     dataIn <- xmlParse(inFile)
     
     xmlData <- xmlToList(dataIn)
+    #get the file and parse it to a list
     
     
     for (i in 1:length(xmlData)) {
@@ -96,54 +97,10 @@ for(f in 1:3){
         }else{
             next
         }
-        >>>>>>> origin/master
         
-        # for(zipfile in ZipFiles){
-        file.copy(from=paste(MainDirectory, zipfile, sep=.Platform$file.sep), 
-                  to=paste(pathToTemp, zipfile, sep=.Platform$file.sep))
-        #copy the .gz file to Temp directory
-        
-        
-        
-        setwd(pathToTemp)
-        gunzip(zipfile)
-        #go to that temp dir and unzip file
-        
-        
-        
-        fileName <- substr(x=zipfile, start=1, stop=nchar(zipfile)-3)
-        #unzip the files and get the name from that file without the .gz
-        
-        
-        all_compounds <- data.frame(PubChem_ID=numeric(), 
-                                    IUPAC_Name=character(), 
-                                    InChIKey=character(), 
-                                    Formula=character(),
-                                    Exact_Mass=numeric(),
-                                    Molecular_Weight=numeric()
-        )
-        
-        
-        
-        inFile <- fileName
-        
-        dataIn <- xmlParse(inFile)
-        
-        xmlData <- xmlToList(dataIn)
-        
-        for (i in 1:10) {    
-            #     for (i in 1:length(xmlData)) {
-            current_compound <- xmlData[[i]]
-            
-            if(is.recursive(current_compound)){
-                current_compound_id <- as.numeric(current_compound$"PC-Compound_id"$"PC-CompoundType"$"PC-CompoundType_id"$"PC-CompoundType_id_cid")
-            }else{
-                next
-            }
-            
-            
-            
-            
+    
+
+  
             current_compound_properties <- current_compound[["PC-Compound_props"]]
             
             #First if statement checks for index out of bounds error

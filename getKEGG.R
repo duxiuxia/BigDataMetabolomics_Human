@@ -24,7 +24,7 @@ setwd("C:/Users/matt/Desktop/KEGGMetabolites")
 
 
 results <- data.frame(Entry=character(), Name=character(), Formula=character(), Exact_Mass=character())
-
+#resusts data frame with the Entry, Name, Formula, ExactMass
 
 masses <- seq(from=50, to=1500, by=0.01) 
 # /find/compound/174.05/exact_mass   for 174.045 =< exact_mass =< 174.055, so use by=0.01 
@@ -42,11 +42,12 @@ error_message=""
 for (i in 1:length(masses)) {
     current_mass <- as.character(masses[i])
     
+    #Looks up Kegg database for the compound with current_mass
     query_1 <- paste("http://rest.kegg.jp", "find", "compound", 
                      current_mass, "exact_mass", sep=.Platform$file.sep)
     
     tmp <- try(read.table(query_1), silent=T)
-   
+   #try to read the file
     if (inherits(tmp, 'try-error')) {
       #If an empty file do nothing
       
@@ -60,7 +61,6 @@ for (i in 1:length(masses)) {
         
         for (c in 1:length(compounds)) {
             cpdID <- compounds[c]
-            
             filename <- paste(substr(x=cpdID, start=5, stop=nchar(cpdID)), "txt", sep=".")
             
             if (!file.exists(filename)) {
@@ -73,6 +73,7 @@ for (i in 1:length(masses)) {
             fileinfo <- paste(readLines(filename)) # Is paste necessary here?
                 
             for (line in fileinfo) {
+                #If the line contains the Entry associated with that compound
                   if (length(grep("ENTRY", line)) > 0) {
                       cpdEntry <- substr(x=gsub(pattern=" ", replacement="", x=line), 
                                          start=6, 
@@ -100,7 +101,7 @@ for (i in 1:length(masses)) {
               }
                 
               newcpd <- data.frame(Entry=cpdEntry, Name=cpdName, Formula=cpdFormula, Exact_Mass=cpdMass)
-                
+                #make a new compound and add it to the results removing unique copounds
               results <- rbind(unique(results), newcpd)
         }
     }

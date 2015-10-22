@@ -5,7 +5,7 @@
 # Started in June 2015
 
 
-
+#Run this program in the same directory as the HMDB XML database file
 
 if (!is.element("XML", installed.packages()[,1])) {
     install.packages("XML")
@@ -15,7 +15,7 @@ if (!is.element("XML", installed.packages()[,1])) {
 library(XML)
 
 
-
+#data frame of the results
 metaboliteList<-data.frame(Accession=character(0),
                            Name=character(0),
                            Chemical_Formula=character(0),
@@ -24,10 +24,10 @@ metaboliteList<-data.frame(Accession=character(0),
 
 
 
-
+#for the xml file in your current working directory
 for (infile in dir(getwd(),pattern="*.xml")){
   data<-xmlParse(infile)
-  
+  #parse the file to a list
   xml_data<-xmlToList(data)
   
   metaboliteList<-rbind(metaboliteList,
